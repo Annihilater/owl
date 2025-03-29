@@ -99,6 +99,19 @@
   </p>
 </div>
 
+<div align="center" style="background-color: #e8f5e9; padding: 15px; border-radius: 10px; border: 2px solid #4caf50; margin: 20px 0;">
+  <h3 style="color: #2e7d32; margin: 0; font-size: 1.3em;">
+    🧩 <b>新增：社区智能体挑战！</b> 🧩
+  </h3>
+  <p style="font-size: 1.1em; margin: 10px 0;">
+    展示您的创造力，为AI智能体设计独特的挑战！<br>
+    加入我们的社区，见证您的创新想法被尖端AI技术实现。
+  </p>
+  <p>
+    <a href="https://github.com/camel-ai/owl/blob/main/community_challenges.md" style="background-color: #2e7d32; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold;">查看与提交挑战</a>
+  </p>
+</div>
+
 <div style="background-color: #e3f2fd; padding: 12px; border-radius: 8px; border-left: 4px solid #1e88e5; margin: 10px 0;">
   <h4 style="color: #1e88e5; margin: 0 0 8px 0;">
     🎉 最新重大更新 - 2025年3月15日
@@ -113,6 +126,12 @@
   </p>
 </div>
 
+- **[2025.03.27]**: 集成SearxNGToolkit，使用SearxNG搜索引擎执行网络搜索。
+- **[2025.03.26]**: 增强Browser Toolkit，支持"chrome"、"msedge"和"chromium"多种浏览器通道。
+- **[2025.03.25]**: 支持Gemini 2.5 Pro模型，添加示例运行代码。
+- **[2025.03.21]**: 集成OpenRouter模型平台，修复Gemini工具调用的bug。
+- **[2025.03.20]**: 在MCP工具包中添加Accept header，支持自动安装playwright。
+- **[2025.03.16]**: 支持必应搜索、百度搜索。
 - **[2025.03.12]**: 在SearchToolkit中添加了Bocha搜索功能，集成了火山引擎模型平台，并更新了Azure和OpenAI Compatible模型的结构化输出和工具调用能力。
 - **[2025.03.11]**: 我们添加了 MCPToolkit、FileWriteToolkit 和 TerminalToolkit，增强了 OWL Agent 的 MCP（模型上下文协议）集成、文件写入能力和终端命令执行功能。MCP 作为一个通用协议层，标准化了 AI 模型与各种数据源和工具的交互方式。
 - **[2025.03.09]**: 我们添加了基于网页的用户界面，使系统交互变得更加简便。
@@ -124,6 +143,8 @@
 https://private-user-images.githubusercontent.com/55657767/420211368-f29f477d-7eef-46da-8d7a-8f3bcf506da2.mp4
 
 https://private-user-images.githubusercontent.com/55657767/420212194-e813fc05-136a-485f-8df3-f10d9b4e63ec.mp4
+
+此视频演示了如何在本地安装 OWL，展示了它作为一个前沿的多智能体协作框架，推动任务自动化边界的能力：https://www.youtube.com/watch?v=8XlqVyAZOr8
 
 # ✨️ 核心功能
 
@@ -253,7 +274,9 @@ OWL 需要各种 API 密钥来与不同的服务进行交互。`owl/.env_templat
 
 ## **使用Docker运行**
 
-如果您希望使用Docker运行OWL项目，我们提供了完整的Docker支持：
+OWL可以通过Docker轻松部署，Docker提供了跨不同平台的一致环境。
+
+### **设置说明**
 
 ```bash
 # 克隆仓库
@@ -263,32 +286,64 @@ cd owl
 # 配置环境变量
 cp owl/.env_template owl/.env
 # 编辑.env文件，填入您的API密钥
+```
 
-# 选项1：直接使用docker-compose
-cd .container
+### **部署选项**
 
+#### **选项1：使用预构建镜像（推荐）**
+
+```bash
+# 此选项从Docker Hub下载一个即用型镜像
+# 最快速且推荐给大多数用户
 docker-compose up -d
 
 # 在容器中运行OWL
 docker-compose exec owl bash
-
-# 激活虚拟环境
-cd .. && source .venv/bin/activate && cd owl
-
-playwright install-deps 
-
-#运行例子演示脚本
+cd .. && source .venv/bin/activate
+playwright install-deps
 xvfb-python examples/run.py
+```
 
-# 选项2：使用提供的脚本构建和运行
+#### **选项2：本地构建镜像**
+
+```bash
+# 适用于需要自定义Docker镜像或无法访问Docker Hub的用户：
+# 1. 打开docker-compose.yml
+# 2. 注释掉"image: mugglejinx/owl:latest"行
+# 3. 取消注释"build:"部分及其嵌套属性
+# 4. 然后运行：
+docker-compose up -d --build
+
+# 在容器中运行OWL
+docker-compose exec owl bash
+cd .. && source .venv/bin/activate
+playwright install-deps
+xvfb-python examples/run.py
+```
+
+#### **选项3：使用便捷脚本**
+
+```bash
+# 导航到容器目录
 cd .container
+
+# 使脚本可执行并构建Docker镜像
 chmod +x build_docker.sh
 ./build_docker.sh
-# 在容器中运行OWL
+
+# 使用您的问题运行OWL
 ./run_in_docker.sh "您的问题"
 ```
 
-更多详细的Docker使用说明，包括跨平台支持、优化配置和故障排除，请参阅 [DOCKER_README.md](.container/DOCKER_README.md)
+### **MCP Desktop Commander设置**
+
+如果在Docker中使用MCP Desktop Commander，请运行：
+
+```bash
+npx -y @wonderwhy-er/desktop-commander setup --force-file-protocol
+```
+
+更多详细的Docker使用说明，包括跨平台支持、优化配置和故障排除，请参阅 [DOCKER_README.md](.container/DOCKER_README_en.md)
 
 # 🚀 快速开始
 
@@ -329,8 +384,11 @@ python examples/run_qwen_zh.py
 # 使用 Deepseek 模型运行
 python examples/run_deepseek_zh.py
 
+# 使用 Gemini 模型运行
+python examples/run_gemini.py
+
 # 使用其他 OpenAI 兼容模型运行
-python examples/run_openai_compatiable_model.py
+python examples/run_openai_compatible_model.py
 
 # 使用 Azure OpenAI模型运行
 python examples/run_azure_openai.py
@@ -343,7 +401,7 @@ python examples/run_ollama.py
 
 ```python
 # Define your own task
-question = "Task description here."
+task = "Task description here."
 
 society = construct_society(question)
 answer, chat_history, token_count = run_society(society)
@@ -355,7 +413,7 @@ print(f"\033[94mAnswer: {answer}\033[0m")
 
 ```python
 # 处理本地文件（例如，文件路径为 `tmp/example.docx`）
-question = "给定的 DOCX 文件中有什么内容？文件路径如下：tmp/example.docx"
+task = "给定的 DOCX 文件中有什么内容？文件路径如下：tmp/example.docx"
 
 society = construct_society(question)
 answer, chat_history, token_count = run_society(society)
@@ -376,6 +434,29 @@ OWL 将自动调用与文档相关的工具来处理文件并提取答案。
 ## 模型上下文协议（MCP）
 
 OWL 的 MCP 集成为 AI 模型与各种工具和数据源的交互提供了标准化的方式。
+在使用MCP前，需要先安装Node.js。
+### **安装 Node.js**
+### Windows
+
+下载官方安装包：[Node.js](https://nodejs.org/zh-cn)。
+
+安装时，勾选 "Add to PATH" 选项。
+
+### Linux
+```bash
+sudo apt update
+sudo apt install nodejs npm -y
+```
+### Mac
+```bash
+brew install node
+```
+
+### **安装 MCP 服务**
+```bash
+npm install -g @executeautomation/playwright-mcp-server
+npx playwright install-deps
+```
 
 查看我们的综合示例 `examples/run_mcp.py` 来体验这些功能！
 
@@ -525,11 +606,10 @@ python examples/run_gaia_roleplaying.py
 3. 提交包含您改进的拉取请求
 
 **当前开放贡献的问题：**
-- [#1868](https://github.com/camel-ai/camel/issues/1868)
-- [#1866](https://github.com/camel-ai/camel/issues/1866)
-- [#1770](https://github.com/camel-ai/camel/issues/1770)
-- [#1712](https://github.com/camel-ai/camel/issues/1712)
-- [#1537](https://github.com/camel-ai/camel/issues/1537)
+- [#362](https://github.com/camel-ai/owl/issues/362)
+- [#1945](https://github.com/camel-ai/camel/issues/1945)
+- [#1925](https://github.com/camel-ai/camel/issues/1925)
+- [#1915](https://github.com/camel-ai/camel/issues/1915)
 
 要认领一个问题，只需在该问题下留言表明您的兴趣即可。
 
@@ -538,7 +618,7 @@ python examples/run_gaia_roleplaying.py
 
 加入我们，参与更多讨论！
 
-![](./assets/community.jpeg)
+![](./assets/community.jpg)
 
 # ❓ 常见问题
 
